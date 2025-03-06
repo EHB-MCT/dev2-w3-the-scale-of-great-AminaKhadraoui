@@ -4,61 +4,135 @@ let adjectives;
 let sortDirection = "up";
 
 function init() {
-	// 1 JSON inladen
+	//JSON inladen
 	const data = getAdjectives();
 	console.log(data);
-
-	// 2 JSON object maken
+	//JSON in object veranderen
 	adjectives = JSON.parse(data);
-	// 3 render functie oproepen
+	//reder functie oproepen
 	render();
-	// 4 addSortEvents oproepen
+	//addsortevents oproepen
+	addSortEvents();
 }
 
-function addSortEvents() {}
+function addSortEvents() {
+	//code van Joni uit GitHub
+	document
+		.querySelector("#sort-up")
+		.addEventListener("click", function (event) {
+			this.classList.add("active");
+			document.querySelector("#sort-down").classList.remove("active");
+			console.log("Sort up!");
+			sortDirection = "up";
+			sort();
+		});
+
+	document.querySelector("#sort-down").addEventListener("click", function () {
+		this.classList.add("active");
+		document.querySelector("#sort-up").classList.remove("active");
+		console.log("Sort down!");
+		sortDirection = "down";
+		sort();
+	});
+}
 
 function addVoteEvents() {
-	const upVoteButtons = document.querySelectorAll(".upVoteButton");
+	/*const upVoteButtons = document.querySelectorAll(".upvote-button");
 	console.log(upVoteButtons);
 	upVoteButtons.forEach(function (button) {
-		console.log(button);
 		button.addEventListener("click", function (event) {
 			console.log(event.target.value);
 			updateScore(event.target.value, 0.1);
 		});
+	});*/
+
+	//code van Joni uit GitHub
+	const upvoteButtons = document.querySelectorAll(".upvote-button");
+	upvoteButtons.forEach(function (button) {
+		button.addEventListener("click", function (event) {
+			console.log(event.target);
+			upVote(event.target);
+		});
+	});
+
+	const downvoteButtons = document.querySelectorAll(".downvote-button");
+	downvoteButtons.forEach(function (button) {
+		button.addEventListener("click", function (event) {
+			console.log(event.target);
+			downVote(event.target);
+		});
 	});
 }
 
-function sort() {}
+function sort() {
+	//code van joni uit GitHub
+	console.log("This is the sorting function");
+
+	if (sortDirection == "down") {
+		adjectives.sort(function (a, b) {
+			if (a.score > b.score) {
+				return -1;
+			} else {
+				return 1;
+			}
+		});
+	} else {
+		adjectives.sort(function (a, b) {
+			if (a.score > b.score) {
+				return 1;
+			} else {
+				return -1;
+			}
+		});
+	}
+
+	render();
+}
 
 function render() {
-	//3.1 foreach aan array toevoegen aan de html
+	// foreach voor de array toevoegen aan de html
 	let html = "";
+	let score;
+	console.log(adjectives);
 
 	adjectives.forEach(function (adjective) {
-		let score = "bad";
+		// classe toevoegen voor elke score (>= 6 is 'good')
+		let scoreClass = "bad";
 		if (adjective.score >= 6) {
-			score = "good";
+			scoreClass = "good";
 		}
-		html += `<div class="word-item">
-            <span class= "word-score ${score}" >${adjective.score}</span>
+
+		html += `  
+        <div class="word-item">
+            <span class= "word-score ${scoreClass}" >${adjective.score}</span>
             <span>${adjective.word}</span>
             <div class="vote-buttons">
                 <button value="${adjective.word}" class="upvote-button">👍</button>
                 <button value="${adjective.word}" class="downvote-button">👎</button>
             </div>
-        </div>`;
+        </div>
+        `;
 	});
-	//3.2 classe toevoegen voor elke score (>= 6 is 'good')
 
-	//3.3 html string toevoegen aan container
+	// HTML string toevoegen aan #container
 	document.querySelector("#container").innerHTML = html;
+	//addVoteEvents oproepen
 	addVoteEvents();
 }
 
-function upVote(target) {}
+function upVote(target) {
+	//code van Joni uit GitHub
+	console.log("Upvote", target.value);
+	updateScore(target.value, 0.1);
+	render();
+}
 
-function downVote(target) {}
+function downVote(target) {
+	//code van Joni uit GitHub
+	console.log("Downvote", target.value);
+	updateScore(target.value, -0.1);
+	render();
+}
 
 function updateScore(word, scoreChange) {
 	const foundIndex = adjectives.findIndex(function (item, index) {
