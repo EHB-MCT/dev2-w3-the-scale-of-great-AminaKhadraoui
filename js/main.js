@@ -4,15 +4,17 @@ let adjectives;
 let sortDirection = "up";
 
 function init() {
-	//JSON inladen
-	const data = getAdjectives();
-	console.log(data);
-	//JSON in object veranderen
-	adjectives = JSON.parse(data);
-	//reder functie oproepen
-	render();
-	//addsortevents oproepen
-	addSortEvents();
+	//todo: get adjectives from api
+	fetch("https://dev2-prima.onrender.com/adjectives")
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (json) {
+			adjectives = json;
+			console.log(adjectives);
+			render();
+			addSortEvents();
+		});
 }
 
 function addSortEvents() {
@@ -121,17 +123,30 @@ function render() {
 }
 
 function upVote(target) {
+	fetch(`https://dev2-prima.onrender.com/upvote/${target.value}`).then(
+		function () {
+			console.log("upvote klaar");
+			init();
+		}
+	);
+
 	//code van Joni uit GitHub
-	console.log("Upvote", target.value);
+	/*console.log("Upvote", target.value);
 	updateScore(target.value, 0.1);
-	render();
+	render();*/
 }
 
 function downVote(target) {
+	fetch(`https://dev2-prima.onrender.com/downvote/${target.value}`).then(
+		function () {
+			console.log("downvote klaar");
+			init();
+		}
+	);
 	//code van Joni uit GitHub
-	console.log("Downvote", target.value);
+	/*console.log("Downvote", target.value);
 	updateScore(target.value, -0.1);
-	render();
+	render();*/
 }
 
 function updateScore(word, scoreChange) {
